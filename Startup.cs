@@ -28,8 +28,6 @@ namespace SimplzFamilyTree
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddApplication(Configuration);
-            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
         }
 

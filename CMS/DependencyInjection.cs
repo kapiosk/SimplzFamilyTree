@@ -36,17 +36,8 @@ namespace SimplzFamilyTree.CMS
                 opts.Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
             });
 
-            //services.AddScoped<SignInManager<ApplicationUser>>();
-
             services.AddDefaultIdentity<ApplicationUser>(opts => configuration.Bind("IdentityCoreSettings", opts))
                  .AddEntityFrameworkStores<ApplicationDbContext>();
-            //services.AddIdentityCore<ApplicationUser>(opts => configuration.Bind("IdentityCoreSettings", opts))
-            //        .AddEntityFrameworkStores<ApplicationDbContext>()
-            //        .AddDefaultTokenProviders()
-            //        .AddDefaultUI();
-
-            //services.AddAuthentication(IdentityConstants.ApplicationScheme)
-            //        .AddCookie(IdentityConstants.ApplicationScheme, opts => configuration.Bind("CookieSettings", opts));
 
             return services;
         }
