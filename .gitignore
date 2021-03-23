@@ -1,0 +1,10 @@
+.vs
+.vscode
+.config
+bin
+obj
+wwwroot/AppData
+Properties/PublishProfiles
+Properties/ServiceDependencies
+appsettings.Development.json
+appsettings.Production.json
