@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplzFamilyTree.Data;
 
 namespace SimplzFamilyTree.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210325064801_M5")]
+    partial class M5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -301,7 +303,7 @@ namespace SimplzFamilyTree.Migrations
                     b.Property<int?>("PersonId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RelatedPersonId")
+                    b.Property<int?>("RelatedPersonPersonId")
                         .HasColumnType("int");
 
                     b.Property<int>("Relation")
@@ -311,7 +313,7 @@ namespace SimplzFamilyTree.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.HasIndex("RelatedPersonId");
+                    b.HasIndex("RelatedPersonPersonId");
 
                     b.ToTable("PersonRelations");
                 });
@@ -406,7 +408,7 @@ namespace SimplzFamilyTree.Migrations
 
                     b.HasOne("SimplzFamilyTree.Data.Person", "RelatedPerson")
                         .WithMany()
-                        .HasForeignKey("RelatedPersonId");
+                        .HasForeignKey("RelatedPersonPersonId");
 
                     b.Navigation("Person");
 

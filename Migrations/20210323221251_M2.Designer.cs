@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplzFamilyTree.Data;
 
 namespace SimplzFamilyTree.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210323221251_M2")]
+    partial class M2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,8 +231,8 @@ namespace SimplzFamilyTree.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("DoB")
-                        .HasColumnType("Date");
+                    b.Property<DateTime>("DoB")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("EMail")
                         .HasColumnType("nvarchar(max)");
@@ -255,15 +257,10 @@ namespace SimplzFamilyTree.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
                     b.HasKey("PersonEventId");
-
-                    b.HasIndex("PersonId");
 
                     b.ToTable("PersonEvents");
                 });
@@ -278,7 +275,7 @@ namespace SimplzFamilyTree.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PersonId")
+                    b.Property<int?>("PersonId")
                         .HasColumnType("int");
 
                     b.Property<byte[]>("ProductImage")
@@ -301,7 +298,7 @@ namespace SimplzFamilyTree.Migrations
                     b.Property<int?>("PersonId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RelatedPersonId")
+                    b.Property<int?>("RelatedPersonPersonId")
                         .HasColumnType("int");
 
                     b.Property<int>("Relation")
@@ -311,7 +308,7 @@ namespace SimplzFamilyTree.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.HasIndex("RelatedPersonId");
+                    b.HasIndex("RelatedPersonPersonId");
 
                     b.ToTable("PersonRelations");
                 });
@@ -376,24 +373,11 @@ namespace SimplzFamilyTree.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("SimplzFamilyTree.Data.PersonEvent", b =>
-                {
-                    b.HasOne("SimplzFamilyTree.Data.Person", "Person")
-                        .WithMany("PersonEvents")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Person");
-                });
-
             modelBuilder.Entity("SimplzFamilyTree.Data.PersonImage", b =>
                 {
                     b.HasOne("SimplzFamilyTree.Data.Person", "Person")
-                        .WithMany("PersonImages")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("PersonId");
 
                     b.Navigation("Person");
                 });
@@ -406,18 +390,11 @@ namespace SimplzFamilyTree.Migrations
 
                     b.HasOne("SimplzFamilyTree.Data.Person", "RelatedPerson")
                         .WithMany()
-                        .HasForeignKey("RelatedPersonId");
+                        .HasForeignKey("RelatedPersonPersonId");
 
                     b.Navigation("Person");
 
                     b.Navigation("RelatedPerson");
-                });
-
-            modelBuilder.Entity("SimplzFamilyTree.Data.Person", b =>
-                {
-                    b.Navigation("PersonEvents");
-
-                    b.Navigation("PersonImages");
                 });
 #pragma warning restore 612, 618
         }
