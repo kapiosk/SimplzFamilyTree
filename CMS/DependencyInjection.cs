@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimplzFamilyTree.Data;
@@ -22,7 +24,13 @@ namespace SimplzFamilyTree.CMS
             //    opts.Conventions.AllowAnonymousToPage("/Authorization/Login");
             //});
 
-            services.AddControllers()
+            services.AddControllers(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                                 .RequireAuthenticatedUser()
+                                 .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+            })
                     .AddJsonOptions(opt =>
                     {
                         opt.JsonSerializerOptions.PropertyNamingPolicy = null;
