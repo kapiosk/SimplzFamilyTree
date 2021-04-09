@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using SimplzFamilyTree.Data;
 
-namespace SimplzFamilyTree.Pages.Persons
+namespace SimplzFamilyTree.Pages.PersonRelations
 {
     public class IndexModel : PageModel
     {
@@ -18,11 +18,11 @@ namespace SimplzFamilyTree.Pages.Persons
             _context = context;
         }
 
-        public IList<Person> Person { get;set; }
+        public IList<PersonRelation> PersonRelation { get;set; }
 
         public async Task OnGetAsync()
         {
-            Person = await _context.Persons.OrderBy(p=>p.DoB).ToListAsync();
+            PersonRelation = await _context.PersonRelations.ToListAsync();
         }
     }
 }

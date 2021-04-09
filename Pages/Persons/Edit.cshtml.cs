@@ -12,15 +12,23 @@ namespace SimplzFamilyTree.Pages.Persons
 {
     public class EditModel : PageModel
     {
-        private readonly SimplzFamilyTree.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public EditModel(SimplzFamilyTree.Data.ApplicationDbContext context)
+        public EditModel(ApplicationDbContext context)
         {
             _context = context;
         }
 
         [BindProperty]
         public Person Person { get; set; }
+
+        [BindProperty]
+        public PersonRelation Father { get; set; }
+        public string FatherName { get; set; }
+
+        [BindProperty]
+        public PersonRelation Mother { get; set; }
+        public string MotherName { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -30,6 +38,29 @@ namespace SimplzFamilyTree.Pages.Persons
             }
 
             Person = await _context.Persons.FirstOrDefaultAsync(m => m.PersonId == id);
+
+            var parents = from person in _context.Persons
+                          where person.PersonId == id
+                          join personRelation in _context.PersonRelations on person.PersonId equals personRelation.PersonId
+                          where personRelation.Relation == Relation.ParentY || personRelation.Relation == Relation.ParentX
+                          join parent in _context.Persons on personRelation.RelatedPersonId equals parent.PersonId
+                          select new { personRelation, parent };
+
+            Father = await parents.Where(p => p.personRelation.Relation == Relation.ParentY)
+                                  .Select(p => p.personRelation)
+                                  .FirstOrDefaultAsync() ?? new PersonRelation { Relation = Relation.ParentY };
+
+            FatherName = await parents.Where(p => p.personRelation.Relation == Relation.ParentY)
+                                      .Select(p => p.parent.FullName)
+                                      .FirstOrDefaultAsync() ?? "Select Father";
+
+            Mother = await parents.Where(p => p.personRelation.Relation == Relation.ParentX)
+                                  .Select(p => p.personRelation)
+                                  .FirstOrDefaultAsync() ?? new PersonRelation { Relation = Relation.ParentX };
+
+            MotherName = await parents.Where(p => p.personRelation.Relation == Relation.ParentX)
+                                      .Select(p => p.parent.FullName)
+                                      .FirstOrDefaultAsync() ?? "Select Mother";
 
             if (Person == null)
             {
@@ -42,25 +73,40 @@ namespace SimplzFamilyTree.Pages.Persons
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return Page();
+            //}
 
-            _context.Attach(Person).State = EntityState.Modified;
-
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PersonExists(Person.PersonId))
+                try
                 {
-                    return NotFound();
+                    _context.Attach(Person).State = EntityState.Modified;
+
+                    foreach (var parent in new[] { Father, Mother })
+                    {
+                        parent.PersonId = Person.PersonId;
+                        if (parent.RelatedPersonId == 0)
+                        {
+                            if (parent.PersonRelationId > 0)
+                                _context.Attach(parent).State = EntityState.Deleted;
+                        }
+                        else
+                        {
+                            if (parent.PersonRelationId > 0)
+                                _context.Attach(parent).State = EntityState.Modified;
+                            else
+                                _context.Attach(parent).State = EntityState.Added;
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                    transaction.Commit();
                 }
-                else
+                catch
                 {
+                    transaction.Rollback();
                     throw;
                 }
             }

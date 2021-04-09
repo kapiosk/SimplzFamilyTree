@@ -14,10 +14,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Person[0].Name)
+                @Html.DisplayNameFor(model => model.Person[0].FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Person[0].Nickname)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Person[0].DoB)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Person[0].DoD)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Person[0].EMail)
@@ -29,10 +35,19 @@
 @foreach (var item in Model.Person) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nickname)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DoB)
+            </td>
+            <td>
+                @if (item.DoD.HasValue)
+                {
+                    @Html.DisplayFor(modelItem => item.DoD)
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EMail)

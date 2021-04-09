@@ -13,16 +13,28 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Person.Name)
+            @Html.DisplayNameFor(model => model.Person.FullName)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Person.Name)
+            @Html.DisplayFor(model => model.Person.FullName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Person.Nickname)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Person.Nickname)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Person.DoB)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Person.DoB)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Person.DoD)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Person.DoD)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Person.EMail)

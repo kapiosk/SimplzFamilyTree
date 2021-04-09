@@ -13,10 +13,19 @@
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Father.PersonRelationId" />
+            <input type="hidden" asp-for="Father.Relation" />
+            <input type="hidden" asp-for="Mother.PersonRelationId" />
+            <input type="hidden" asp-for="Mother.Relation" />
             <div class="form-group">
-                <label asp-for="Person.Name" class="control-label"></label>
-                <input asp-for="Person.Name" class="form-control" />
-                <span asp-validation-for="Person.Name" class="text-danger"></span>
+                <label asp-for="Person.FullName" class="control-label"></label>
+                <input asp-for="Person.FullName" class="form-control" />
+                <span asp-validation-for="Person.FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Person.Nickname" class="control-label"></label>
+                <input asp-for="Person.Nickname" class="form-control" />
+                <span asp-validation-for="Person.Nickname" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Person.DoB" class="control-label"></label>
@@ -24,9 +33,30 @@
                 <span asp-validation-for="Person.DoB" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Person.DoD" class="control-label"></label>
+                <input asp-for="Person.DoD" class="form-control" />
+                <span asp-validation-for="Person.DoD" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Person.EMail" class="control-label"></label>
                 <input asp-for="Person.EMail" class="form-control" />
                 <span asp-validation-for="Person.EMail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Father.RelatedPersonId" class="control-label">Father</label>
+                <select class="form-control basicAutoSelect"
+                        asp-for="Father.RelatedPersonId"
+                        placeholder="type to search..."
+                        data-noresults-text="Nothing to see here."
+                        data-url="/api/People" autocomplete="off"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mother.RelatedPersonId" class="control-label">Mother</label>
+                <select class="form-control basicAutoSelect"
+                        asp-for="Father.RelatedPersonId"
+                        placeholder="type to search..."
+                        data-noresults-text="Nothing to see here."
+                        data-url="/api/People" autocomplete="off"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -40,5 +70,10 @@
 </div>
 
 @section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.basicAutoSelect').autoComplete();
+        });
+    </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
