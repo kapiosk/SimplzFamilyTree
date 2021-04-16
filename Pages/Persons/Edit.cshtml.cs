@@ -87,12 +87,12 @@ namespace SimplzFamilyTree.Pages.Persons
                     foreach (var parent in new[] { Father, Mother })
                     {
                         parent.PersonId = Person.PersonId;
-                        if (parent.RelatedPersonId == 0)
+                        if (parent.RelatedPersonId == -1)
                         {
                             if (parent.PersonRelationId > 0)
                                 _context.Attach(parent).State = EntityState.Deleted;
                         }
-                        else
+                        else if (parent.RelatedPersonId > 0)
                         {
                             if (parent.PersonRelationId > 0)
                                 _context.Attach(parent).State = EntityState.Modified;
@@ -112,11 +112,6 @@ namespace SimplzFamilyTree.Pages.Persons
             }
 
             return RedirectToPage("./Index");
-        }
-
-        private bool PersonExists(int id)
-        {
-            return _context.Persons.Any(e => e.PersonId == id);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace SimplzFamilyTree.Controllers
             {
                 value = p.PersonId,
                 text = p.FullName + " " + p.Nickname + " " + p.DoB.ToString("yyyy-MM-dd")
-            }).ToList().Concat(new[] { new { value = 0, text = "None" } }));
+            }).ToList().Concat(new[] { new { value = -1, text = "None" } }));
         }
 
         [HttpGet("{inp}")]
