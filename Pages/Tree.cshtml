@@ -1,0 +1,238 @@
+﻿@page "{PersonId}"
+@model SimplzFamilyTree.Pages.TreeModel
+@{
+    ViewData["Title"] = $"Famlity tree for {Model.Name}";
+}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    #tree ul {
+        padding-top: 20px;
+        position: relative;
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+    }
+
+    #tree li {
+        float: left;
+        text-align: center;
+        list-style-type: none;
+        position: relative;
+        padding: 20px 5px 10px 5px;
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+    }
+
+        #tree li::before,
+        #tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 1px solid #ccc;
+            width: 50%;
+            height: 20px;
+        }
+
+        #tree li::after {
+            right: auto;
+            left: 50%;
+            border-left: 1px solid #ccc;
+        }
+
+        #tree li:only-child::after,
+        #tree li:only-child::before {
+            display: none;
+        }
+
+        #tree li:only-child {
+            padding-top: 0;
+        }
+
+        #tree li:first-child::before,
+        #tree li:last-child::after {
+            border: 0 none;
+        }
+
+        #tree li:last-child::before {
+            border-right: 1px solid #ccc;
+            border-radius: 0 5px 0 0;
+            -webkit-border-radius: 0 5px 0 0;
+            -moz-border-radius: 0 5px 0 0;
+        }
+
+        #tree li:first-child::after {
+            border-radius: 5px 0 0 0;
+            -webkit-border-radius: 5px 0 0 0;
+            -moz-border-radius: 5px 0 0 0;
+        }
+
+    #tree ul ul::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        border-left: 1px solid #ccc;
+        width: 0;
+        height: 20px;
+    }
+
+    #tree li a {
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        text-decoration: none;
+        color: #666;
+        font-family: arial, verdana, tahoma;
+        font-size: 11px;
+        display: inline-block;
+        border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+    }
+
+        #tree li a.active,
+        #tree li a.active + ul li a,
+        #tree li a:hover,
+        #tree li a:hover + ul li a {
+            background: #c8e4f8;
+            color: #000;
+            border: 1px solid #94a0b4;
+        }
+
+    #menu {
+        text-align: center;
+        background-color: lightgrey;
+    }
+
+    #btnDown, #addChildMenu {
+        display: none;
+    }
+</style>
+
+<div id="tree"></div>
+
+<script>
+
+    function Member(name, imageSrc, spouceName) {
+        this.name = name;
+        this.children = [];
+        this.imageSrc = imageSrc;
+        this.spouceName = spouceName;
+        this.htmlItem = document.createElement('ul');
+    }
+    Member.prototype.addChild = function (child, createHTML) {
+        if (createHTML !== undefined && createHTML == true) {
+            var li = document.createElement('li');
+            li.appendChild(child.getTag());
+            this.htmlItem.appendChild(li);
+        }
+        this.children.push(child);
+    };
+    Member.prototype.toString = function () {
+        return JSON.stringify(this);
+    };
+    Member.prototype.getTag = function () {
+        var anc = document.createElement('a');
+        anc.classList.add("members");
+        anc.href = "#";
+        if (this.imageSrc != undefined) {
+            var img = document.createElement('img');
+            img.src = this.imageSrc;
+            anc.appendChild(img);
+            anc.appendChild(document.createElement('br'));
+        }
+        if (this.name != undefined) {
+            var span = document.createElement('span');
+            span.textContent = this.name;
+            anc.appendChild(span);
+            anc.appendChild(document.createElement('br'));
+        }
+        if (this.spouceName != undefined) {
+            var span = document.createElement('span');
+            span.textContent = this.spouceName;
+            anc.appendChild(span);
+            anc.appendChild(document.createElement('br'));
+        }
+        anc.addEventListener('click', function (e) {
+            var me = this;
+            var family = document.querySelectorAll('.members');
+            [].forEach.call(family, function (it) {
+                if (it != me) it.classList.remove('active');
+            });
+            this.classList.toggle('active');
+            var acm = document.getElementById('addChildMenu');
+            if (this.classList.contains('active'))
+                acm.style.display = "block";
+            else
+                acm.style.display = "none";
+        });
+        return anc;
+    };
+    Member.traverseAndFindByNode = function (elem, str) {
+        if (str == elem.getTag().outerHTML.replace(" active", ""))
+            return elem;
+        for (var i = 0; i < elem.children.length; i++) {
+            var res = Member.traverseAndFindByNode(elem.children[i], str);
+            if (res !== null) return res;
+        }
+        return null;
+    };
+
+    Member.addChildAndCreateHTML = function (child) {
+        var activeNode = document.querySelector('.active');
+        var find = activeNode.outerHTML.replace(" active", "");
+        var active = Member.traverseAndFindByNode(treeRoot, find);
+        if (active.children.length === 0)
+            activeNode.parentNode.appendChild(active.htmlItem);
+        active.addChild(child, true);
+    };
+    Member.newFromObject = function (obj) {
+        var it = new Member(obj.name, obj.imageSrc, obj.spouceName);
+        for (var i = 0; i < obj.children.length; i++)
+            it.addChild(Member.newFromObject(obj.children[i]));
+        return it;
+    };
+    Member.parseFromString = function (str) {
+        return Member.newFromObject(JSON.parse(str));
+    };
+
+    Member.nextItem = function (item, parent) {
+        for (var i = 0; i < item.children.length; i++)
+            Member.nextItem(item.children[i], item);
+
+        var li = document.createElement('li');
+        li.appendChild(item.getTag());
+
+        if (parent === undefined) {
+            var ul = document.createElement('ul');
+            ul.appendChild(li);
+            document.getElementById("tree").appendChild(ul);
+        }
+        else
+            parent.htmlItem.appendChild(li);
+
+        if (item.children.length > 0)
+            li.appendChild(item.htmlItem);
+    }
+
+    var xmlhttp = new XMLHttpRequest();
+    var url = "/api/people/tree/@Model.PersonId";
+
+    xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var treeRoot = Member.parseFromString(this.responseText);
+            Member.nextItem(treeRoot);
+        }
+    };
+
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+</script>
