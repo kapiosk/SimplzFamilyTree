@@ -4,10 +4,10 @@
     ViewData["Title"] = $"Famlity tree for {Model.Name}";
 }
 <style>
-    * {
+    /*    * {
         margin: 0;
         padding: 0;
-    }
+    }*/
 
     #tree ul {
         padding-top: 20px;
@@ -107,25 +107,26 @@
             border: 1px solid #94a0b4;
         }
 
-    #menu {
+    /*    #menu {
         text-align: center;
         background-color: lightgrey;
     }
 
     #btnDown, #addChildMenu {
         display: none;
-    }
+    }*/
 </style>
 
 <div id="tree"></div>
 
 <script>
 
-    function Member(name, imageSrc, spouceName) {
+    function Member(name, imageSrc, spouceName, dates) {
         this.name = name;
         this.children = [];
         this.imageSrc = imageSrc;
         this.spouceName = spouceName;
+        this.dates = dates;
         this.htmlItem = document.createElement('ul');
     }
     Member.prototype.addChild = function (child, createHTML) {
@@ -161,6 +162,12 @@
             anc.appendChild(span);
             anc.appendChild(document.createElement('br'));
         }
+        if (this.dates != undefined) {
+            var span = document.createElement('span');
+            span.textContent = this.dates;
+            anc.appendChild(span);
+            anc.appendChild(document.createElement('br'));
+        }
         anc.addEventListener('click', function (e) {
             var me = this;
             var family = document.querySelectorAll('.members');
@@ -168,11 +175,11 @@
                 if (it != me) it.classList.remove('active');
             });
             this.classList.toggle('active');
-            var acm = document.getElementById('addChildMenu');
-            if (this.classList.contains('active'))
-                acm.style.display = "block";
-            else
-                acm.style.display = "none";
+            //var acm = document.getElementById('addChildMenu');
+            //if (this.classList.contains('active'))
+            //    acm.style.display = "block";
+            //else
+            //    acm.style.display = "none";
         });
         return anc;
     };
@@ -195,9 +202,9 @@
         active.addChild(child, true);
     };
     Member.newFromObject = function (obj) {
-        var it = new Member(obj.name, obj.imageSrc, obj.spouceName);
-        for (var i = 0; i < obj.children.length; i++)
-            it.addChild(Member.newFromObject(obj.children[i]));
+        var it = new Member(obj.Name, obj.ImageSrc, obj.SpouceName, obj.Dates);
+        for (var i = 0; i < obj.Children.length; i++)
+            it.addChild(Member.newFromObject(obj.Children[i]));
         return it;
     };
     Member.parseFromString = function (str) {

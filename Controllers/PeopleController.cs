@@ -60,9 +60,10 @@ namespace SimplzFamilyTree.Controllers
         {
             return new Branch
             {
-                id = p.PersonId,
-                name = p.FullName,
-                children = from personRelation in context.PersonRelations
+                Id = p.PersonId,
+                Name = p.FullName,
+                Dates = $"{p.DoB:yyyy-MM-dd} - {(p.DoD.HasValue ? p.DoD.Value.ToString("yyyy-MM-dd") : "")}",
+                Children = from personRelation in context.PersonRelations
                            where personRelation.RelatedPersonId == p.PersonId
                            join child in context.Persons on personRelation.PersonId equals child.PersonId
                            select GetBranch(child, context)
@@ -71,9 +72,10 @@ namespace SimplzFamilyTree.Controllers
 
         public class Branch
         {
-            public int id { get; set; }
-            public string name { get; set; }
-            public IEnumerable<Branch> children { get; set; }
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public string Dates { get; set; }
+            public IEnumerable<Branch> Children { get; set; }
         }
 
     }
