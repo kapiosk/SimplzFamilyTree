@@ -22,11 +22,19 @@ namespace SimplzFamilyTree.Controllers
         [HttpGet]
         public JsonResult GetPersons()
         {
-            return new JsonResult(_context.Persons.Select(p => new
-            {
-                value = p.PersonId,
-                text = p.FullName + " " + p.Nickname + " " + p.DoB.ToString("yyyy-MM-dd")
-            }).ToList().Concat(new[] { new { value = -1, text = "None" } }));
+            var query = (from p in _context.Persons.ToList()
+                         join s in _context.PersonRelations.ToList() on p.PersonId equals s.PersonId into gj1
+                         join s in _context.PersonRelations.ToList() on p.PersonId equals s.RelatedPersonId into gj2
+                         let g = gj1.FirstOrDefault()?.RelatedPersonId ?? gj2.FirstOrDefault()?.PersonId
+                         select new P
+                         {
+                             value = p.PersonId,
+                             text = p.FullName + " " + p.Nickname + " " + p.DoB.ToString("yyyy-MM-dd"),
+                             spouseValue = g,
+                             spouseText = ""
+                         }).ToList();
+
+            return new JsonResult(query.Concat(new[] { new P { value = -1, text = "None", spouseValue = -1, spouseText = "None" } }));
         }
 
         [HttpGet("{inp}")]
@@ -76,6 +84,14 @@ namespace SimplzFamilyTree.Controllers
             public string Name { get; set; }
             public string Dates { get; set; }
             public IEnumerable<Branch> Children { get; set; }
+        }
+
+        public class P
+        {
+            public int value { get; set; }
+            public string text { get; set; }
+            public int? spouseValue { get; set; }
+            public string? spouseText { get; set; }
         }
 
     }
