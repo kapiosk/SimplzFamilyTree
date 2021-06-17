@@ -60,6 +60,14 @@
                         data-url="/api/People" autocomplete="off"></select>
             </div>
             <div class="form-group">
+                <label asp-for="Spouse.RelatedPersonId" class="control-label">Spouse</label>
+                <select class="form-control basicAutoSelect"
+                        asp-for="Spouse.RelatedPersonId"
+                        placeholder="@Model.SpouseName"
+                        data-noresults-text="Nothing to see here."
+                        data-url="/api/People" autocomplete="off"></select>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

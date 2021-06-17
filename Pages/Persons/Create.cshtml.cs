@@ -32,6 +32,9 @@ namespace SimplzFamilyTree.Pages.Persons
         [BindProperty]
         public PersonRelation Mother { get; set; }
 
+        [BindProperty]
+        public PersonRelation Spouse { get; set; }
+
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
@@ -59,6 +62,13 @@ namespace SimplzFamilyTree.Pages.Persons
                         Mother.Relation = Relation.ParentX;
                         Mother.PersonId = Person.PersonId;
                         _context.PersonRelations.Add(Mother);
+                    }
+
+                    if (Spouse.RelatedPersonId > 0)
+                    {
+                        Spouse.Relation = Relation.Spouse;
+                        Spouse.PersonId = Person.PersonId;
+                        _context.PersonRelations.Add(Spouse);
                     }
 
                     await _context.SaveChangesAsync();

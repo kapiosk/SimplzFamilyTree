@@ -31,7 +31,8 @@ namespace SimplzFamilyTree.Data
     {
         ParentX = 1,
         ParentY = 2,
-        Guardian = 3
+        Guardian = 3,
+        Spouse = 4
     }
 
     public class Person

@@ -30,6 +30,10 @@ namespace SimplzFamilyTree.Pages.Persons
         public PersonRelation Mother { get; set; }
         public string MotherName { get; set; }
 
+        [BindProperty]
+        public PersonRelation Spouse { get; set; }
+        public string SpouseName { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -39,28 +43,35 @@ namespace SimplzFamilyTree.Pages.Persons
 
             Person = await _context.Persons.FirstOrDefaultAsync(m => m.PersonId == id);
 
-            var parents = from person in _context.Persons
+            var relation = from person in _context.Persons
                           where person.PersonId == id
                           join personRelation in _context.PersonRelations on person.PersonId equals personRelation.PersonId
-                          where personRelation.Relation == Relation.ParentY || personRelation.Relation == Relation.ParentX
                           join parent in _context.Persons on personRelation.RelatedPersonId equals parent.PersonId
                           select new { personRelation, parent };
 
-            Father = await parents.Where(p => p.personRelation.Relation == Relation.ParentY)
+            Father = await relation.Where(p => p.personRelation.Relation == Relation.ParentY)
                                   .Select(p => p.personRelation)
                                   .FirstOrDefaultAsync() ?? new PersonRelation { Relation = Relation.ParentY };
 
-            FatherName = await parents.Where(p => p.personRelation.Relation == Relation.ParentY)
+            FatherName = await relation.Where(p => p.personRelation.Relation == Relation.ParentY)
                                       .Select(p => p.parent.FullName)
                                       .FirstOrDefaultAsync() ?? "Select Father";
 
-            Mother = await parents.Where(p => p.personRelation.Relation == Relation.ParentX)
+            Mother = await relation.Where(p => p.personRelation.Relation == Relation.ParentX)
                                   .Select(p => p.personRelation)
                                   .FirstOrDefaultAsync() ?? new PersonRelation { Relation = Relation.ParentX };
 
-            MotherName = await parents.Where(p => p.personRelation.Relation == Relation.ParentX)
+            MotherName = await relation.Where(p => p.personRelation.Relation == Relation.ParentX)
                                       .Select(p => p.parent.FullName)
                                       .FirstOrDefaultAsync() ?? "Select Mother";
+
+            Spouse = await relation.Where(p => p.personRelation.Relation == Relation.Spouse)
+                      .Select(p => p.personRelation)
+                      .FirstOrDefaultAsync() ?? new PersonRelation { Relation = Relation.Spouse };
+
+            SpouseName = await relation.Where(p => p.personRelation.Relation == Relation.Spouse)
+                                      .Select(p => p.parent.FullName)
+                                      .FirstOrDefaultAsync() ?? "Select Spouse";
 
             if (Person == null)
             {
@@ -84,7 +95,7 @@ namespace SimplzFamilyTree.Pages.Persons
                 {
                     _context.Attach(Person).State = EntityState.Modified;
 
-                    foreach (var parent in new[] { Father, Mother })
+                    foreach (var parent in new[] { Father, Mother, Spouse })
                     {
                         parent.PersonId = Person.PersonId;
                         if (parent.RelatedPersonId == -1)
