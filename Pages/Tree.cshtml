@@ -121,11 +121,11 @@
 
 <script>
 
-    function Member(name, imageSrc, spouceName, dates) {
+    function Member(name, imageSrc, spouseName, dates) {
         this.name = name;
         this.children = [];
         this.imageSrc = imageSrc;
-        this.spouceName = spouceName;
+        this.spouseName = spouseName;
         this.dates = dates;
         this.htmlItem = document.createElement('ul');
     }
@@ -156,15 +156,15 @@
             anc.appendChild(span);
             anc.appendChild(document.createElement('br'));
         }
-        if (this.spouceName != undefined) {
-            var span = document.createElement('span');
-            span.textContent = this.spouceName;
-            anc.appendChild(span);
-            anc.appendChild(document.createElement('br'));
-        }
         if (this.dates != undefined) {
             var span = document.createElement('span');
             span.textContent = this.dates;
+            anc.appendChild(span);
+            anc.appendChild(document.createElement('br'));
+        }
+        if (this.spouseName != undefined) {
+            var span = document.createElement('span');
+            span.textContent = this.spouseName;
             anc.appendChild(span);
             anc.appendChild(document.createElement('br'));
         }
@@ -202,7 +202,7 @@
         active.addChild(child, true);
     };
     Member.newFromObject = function (obj) {
-        var it = new Member(obj.Name, obj.ImageSrc, obj.SpouceName, obj.Dates);
+        var it = new Member(obj.Name, obj.ImageSrc, obj.SpouseName, obj.Dates);
         for (var i = 0; i < obj.Children.length; i++)
             it.addChild(Member.newFromObject(obj.Children[i]));
         return it;

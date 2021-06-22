@@ -25,13 +25,13 @@ namespace SimplzFamilyTree.Controllers
             var query = (from p in _context.Persons.ToList()
                          join s in _context.PersonRelations.ToList() on p.PersonId equals s.PersonId into gj1
                          join s in _context.PersonRelations.ToList() on p.PersonId equals s.RelatedPersonId into gj2
-                         let g = gj1.FirstOrDefault()?.RelatedPersonId ?? gj2.FirstOrDefault()?.PersonId
+                         let gId = gj1.FirstOrDefault()?.RelatedPersonId ?? gj2.FirstOrDefault()?.PersonId
                          select new P
                          {
                              value = p.PersonId,
                              text = p.FullName + " " + p.Nickname + " " + p.DoB.ToString("yyyy-MM-dd"),
-                             spouseValue = g,
-                             spouseText = ""
+                             spouseValue = gId,
+                             spouseText = _context.Persons.FirstOrDefault(p => p.PersonId == gId)?.FullName
                          }).ToList();
 
             return new JsonResult(query.Concat(new[] { new P { value = -1, text = "None", spouseValue = -1, spouseText = "None" } }));
@@ -66,13 +66,21 @@ namespace SimplzFamilyTree.Controllers
 
         public static Branch GetBranch(Person p, ApplicationDbContext context)
         {
+            var q = (from personRelation in context.PersonRelations
+                     where personRelation.PersonId == p.PersonId && personRelation.Relation == Relation.Spouse
+                     join person in context.Persons on personRelation.RelatedPersonId equals person.PersonId
+                     select person.FullName).FirstOrDefault();
             return new Branch
             {
                 Id = p.PersonId,
                 Name = p.FullName,
+                SpouseName = (from personRelation in context.PersonRelations
+                             where personRelation.PersonId == p.PersonId && personRelation.Relation == Relation.Spouse
+                             join person in context.Persons on personRelation.RelatedPersonId equals person.PersonId
+                             select person.FullName).FirstOrDefault(),
                 Dates = $"{p.DoB:yyyy-MM-dd} - {(p.DoD.HasValue ? p.DoD.Value.ToString("yyyy-MM-dd") : "")}",
                 Children = from personRelation in context.PersonRelations
-                           where personRelation.RelatedPersonId == p.PersonId
+                           where personRelation.RelatedPersonId == p.PersonId && personRelation.Relation != Relation.Spouse
                            join child in context.Persons on personRelation.PersonId equals child.PersonId
                            select GetBranch(child, context)
             };
@@ -82,6 +90,7 @@ namespace SimplzFamilyTree.Controllers
         {
             public int Id { get; set; }
             public string Name { get; set; }
+            public string SpouseName { get; set; }
             public string Dates { get; set; }
             public IEnumerable<Branch> Children { get; set; }
         }
