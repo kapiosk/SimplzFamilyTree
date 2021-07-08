@@ -34,6 +34,9 @@ namespace SimplzFamilyTree.Pages.Persons
         public PersonRelation Spouse { get; set; }
         public string SpouseName { get; set; }
 
+        [BindProperty]
+        public PersonEvent PersonEvent { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -73,6 +76,10 @@ namespace SimplzFamilyTree.Pages.Persons
                                       .Select(p => p.parent.FullName)
                                       .FirstOrDefaultAsync() ?? "Select Spouse";
 
+            PersonEvent = await (from personEvent in _context.PersonEvents
+                                 where personEvent.PersonId == id
+                                 select personEvent).FirstOrDefaultAsync();
+
             if (Person == null)
             {
                 return NotFound();
@@ -110,6 +117,16 @@ namespace SimplzFamilyTree.Pages.Persons
                             else
                                 _context.Attach(parent).State = EntityState.Added;
                         }
+                    }
+
+                    if (PersonEvent.PersonEventId > 0)
+                    {
+                        _context.Attach(PersonEvent).State = EntityState.Modified;
+                    }
+                    else if (!string.IsNullOrEmpty(PersonEvent.Description))
+                    {
+                        PersonEvent.PersonId = Person.PersonId;
+                        _context.Attach(PersonEvent).State = EntityState.Added;
                     }
 
                     await _context.SaveChangesAsync();
