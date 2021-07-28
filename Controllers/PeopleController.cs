@@ -83,6 +83,7 @@ namespace SimplzFamilyTree.Controllers
                 Children = from personRelation in context.PersonRelations
                            where personRelation.RelatedPersonId == p.PersonId && personRelation.Relation != Relation.Spouse
                            join child in context.Persons on personRelation.PersonId equals child.PersonId
+                           orderby child.DoB descending
                            select GetBranch(child, context),
                 ImageSrc = (from pi in context.PersonImages
                            where pi.PersonId==p.PersonId
