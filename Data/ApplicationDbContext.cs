@@ -72,8 +72,7 @@ namespace SimplzFamilyTree.Data
 
         public string Name { get; set; }
 
-        [Column(TypeName = "image")]
-        public byte[] ProductImage { get; set; }
+        public byte[] Image { get; set; }
 
         [ForeignKey("Person")]
         public int PersonId { get; set; }

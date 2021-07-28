@@ -11,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Person.PersonId" />
             <input type="hidden" asp-for="Father.PersonRelationId" />
@@ -77,6 +77,10 @@
                 <span asp-validation-for="PersonEvent.Description" class="text-danger"></span>
             </div>
             <div class="form-group">
+                  <img src="data:image;base64,@Model.Image" />
+                <input type="file" asp-for="Upload" />
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -88,10 +92,10 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('.basicAutoSelect').autoComplete();
-        });
-    </script>
+<script>
+    $(document).ready(function () {
+        $('.basicAutoSelect').autoComplete();
+    });
+</script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
