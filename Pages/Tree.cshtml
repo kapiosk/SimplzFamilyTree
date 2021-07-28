@@ -146,6 +146,7 @@
         anc.href = "#";
         if (this.imageSrc != undefined) {
             var img = document.createElement('img');
+            img.height=100;
             img.src = this.imageSrc;
             anc.appendChild(img);
             anc.appendChild(document.createElement('br'));

@@ -99,7 +99,7 @@ namespace SimplzFamilyTree.Pages.Persons
 
             if (personImage != null)
             {
-                Image = Convert.ToBase64String(personImage.Image);
+                Image = personImage.ImageSrc;
             }
 
             return Page();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -82,7 +83,10 @@ namespace SimplzFamilyTree.Controllers
                 Children = from personRelation in context.PersonRelations
                            where personRelation.RelatedPersonId == p.PersonId && personRelation.Relation != Relation.Spouse
                            join child in context.Persons on personRelation.PersonId equals child.PersonId
-                           select GetBranch(child, context)
+                           select GetBranch(child, context),
+                ImageSrc = (from pi in context.PersonImages
+                           where pi.PersonId==p.PersonId
+                           select pi.ImageSrc).FirstOrDefault()
             };
         }
 
@@ -92,6 +96,7 @@ namespace SimplzFamilyTree.Controllers
             public string Name { get; set; }
             public string SpouseName { get; set; }
             public string Dates { get; set; }
+            public string ImageSrc { get; set; }
             public IEnumerable<Branch> Children { get; set; }
         }
 

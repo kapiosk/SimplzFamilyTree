@@ -78,6 +78,17 @@ namespace SimplzFamilyTree.Data
         public int PersonId { get; set; }
 
         public Person Person { get; set; }
+
+        [NotMapped]
+        public string ImageSrc
+        {
+            get
+            {
+                if(Image!=null)
+                    return $"data:image;base64,{Convert.ToBase64String(Image)}";
+                return "";
+            }
+        }
     }
 
     public class PersonEvent
