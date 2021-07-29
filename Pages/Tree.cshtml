@@ -187,8 +187,8 @@
                 this.classList.toggle('active');
                 break;
               case 1:
-                let link = 'https://simplzfamilytree.azurewebsites.net/Persons/Edit?id=' + obj.id;
-                window.location.href = link;
+                let url = 'https://simplzfamilytree.azurewebsites.net/Persons/Edit?id=' + obj.id;
+                window.open(url, '_blank').focus();
                 break;
             }
             e.preventDefault();
