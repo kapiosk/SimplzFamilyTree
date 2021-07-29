@@ -5,9 +5,9 @@
 }
 <style>
     /*    * {
-            margin: 0;
-            padding: 0;
-        }*/
+                                margin: 0;
+                                padding: 0;
+                            }*/
     #tree {
         width: 3000px;
     }
@@ -111,25 +111,26 @@
             }
 
     /*    #menu {
-            text-align: center;
-            background-color: lightgrey;
-        }
+                                text-align: center;
+                                background-color: lightgrey;
+                            }
 
-        #btnDown, #addChildMenu {
-            display: none;
-        }*/
+                            #btnDown, #addChildMenu {
+                                display: none;
+                            }*/
 </style>
 
 <div id="tree"></div>
 
 <script>
 
-    function Member(name, imageSrc, spouseName, dates) {
+    function Member(name, imageSrc, spouseName, dates, id) {
         this.name = name;
         this.children = [];
         this.imageSrc = imageSrc;
         this.spouseName = spouseName;
         this.dates = dates;
+        this.id = id.toString();
         this.htmlItem = document.createElement('ul');
     }
     Member.prototype.addChild = function (child, createHTML) {
@@ -144,41 +145,54 @@
         return JSON.stringify(this);
     };
     Member.prototype.getTag = function () {
-        var anc = document.createElement('a');
+        let obj = this;
+        let anc = document.createElement('a');
         anc.classList.add("members");
         anc.href = "#";
-        if (this.imageSrc != undefined) {
+        if (obj.imageSrc != undefined) {
             var img = document.createElement('img');
-            img.height=100;
-            img.src = this.imageSrc;
+            img.height = 100;
+            img.src = obj.imageSrc;
             anc.appendChild(img);
             anc.appendChild(document.createElement('br'));
         }
-        if (this.name != undefined) {
+        if (obj.name != undefined) {
             var span = document.createElement('span');
-            span.textContent = this.name;
+            span.textContent = obj.name;
             anc.appendChild(span);
             anc.appendChild(document.createElement('br'));
         }
-        if (this.dates != undefined) {
+        if (obj.dates != undefined) {
             var span = document.createElement('span');
-            span.textContent = this.dates;
+            span.textContent = obj.dates;
             anc.appendChild(span);
             anc.appendChild(document.createElement('br'));
         }
-        if (this.spouseName != undefined) {
+        if (obj.spouseName != undefined) {
             var span = document.createElement('span');
-            span.textContent = this.spouseName;
+            span.textContent = obj.spouseName;
             anc.appendChild(span);
             anc.appendChild(document.createElement('br'));
         }
-        anc.addEventListener('click', function (e) {
+
+        anc.addEventListener('auxclick', function (e) {
             var me = this;
-            var family = document.querySelectorAll('.members');
-            [].forEach.call(family, function (it) {
-                if (it != me) it.classList.remove('active');
-            });
-            this.classList.toggle('active');
+
+            switch (e.button) {
+              case 0:
+                var family = document.querySelectorAll('.members');
+                [].forEach.call(family, function (it) {
+                    if (it != me) it.classList.remove('active');
+                });
+                this.classList.toggle('active');
+                break;
+              case 1:
+                let link = 'https://simplzfamilytree.azurewebsites.net/Persons/Edit?id=' + obj.id;
+                window.location.href = link;
+                break;
+            }
+            e.preventDefault();
+
             //var acm = document.getElementById('addChildMenu');
             //if (this.classList.contains('active'))
             //    acm.style.display = "block";
@@ -206,7 +220,7 @@
         active.addChild(child, true);
     };
     Member.newFromObject = function (obj) {
-        var it = new Member(obj.Name, obj.ImageSrc, obj.SpouseName, obj.Dates);
+        var it = new Member(obj.Name, obj.ImageSrc, obj.SpouseName, obj.Dates, obj.Id);
         for (var i = 0; i < obj.Children.length; i++)
             it.addChild(Member.newFromObject(obj.Children[i]));
         return it;
