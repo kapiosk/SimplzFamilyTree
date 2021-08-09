@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -76,9 +75,9 @@ namespace SimplzFamilyTree.Controllers
                 Id = p.PersonId,
                 Name = p.FullName,
                 SpouseName = (from personRelation in context.PersonRelations
-                             where personRelation.PersonId == p.PersonId && personRelation.Relation == Relation.Spouse
-                             join person in context.Persons on personRelation.RelatedPersonId equals person.PersonId
-                             select person.FullName).FirstOrDefault(),
+                              where personRelation.PersonId == p.PersonId && personRelation.Relation == Relation.Spouse
+                              join person in context.Persons on personRelation.RelatedPersonId equals person.PersonId
+                              select person.FullName).FirstOrDefault(),
                 Dates = $"{p.DoB:yyyy-MM-dd} - {(p.DoD.HasValue ? p.DoD.Value.ToString("yyyy-MM-dd") : "")}",
                 Children = from personRelation in context.PersonRelations
                            where personRelation.RelatedPersonId == p.PersonId && personRelation.Relation != Relation.Spouse
@@ -86,8 +85,8 @@ namespace SimplzFamilyTree.Controllers
                            orderby child.DoB ascending
                            select GetBranch(child, context),
                 ImageSrc = (from pi in context.PersonImages
-                           where pi.PersonId==p.PersonId
-                           select pi.ImageSrc).FirstOrDefault()
+                            where pi.PersonId == p.PersonId
+                            select pi.ImageSrc).FirstOrDefault()
             };
         }
 
@@ -101,13 +100,16 @@ namespace SimplzFamilyTree.Controllers
             public IEnumerable<Branch> Children { get; set; }
         }
 
+#pragma warning disable IDE1006 // Naming Styles
         public class P
         {
             public int value { get; set; }
+
             public string text { get; set; }
             public int? spouseValue { get; set; }
-            public string? spouseText { get; set; }
+            public string spouseText { get; set; }
         }
+#pragma warning restore IDE1006 // Naming Styles
 
     }
 }
